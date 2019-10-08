@@ -26,11 +26,11 @@ def stringValue(string):
         return None
 
     if len(string) == 1:
-        return ord(string)
+        return ord(string) - 65
 
     value = 0
     for index, char in enumerate(string):
-        value += ord(char) * pow(10, index)
+        value += (ord(char)-65) * pow(10, index)
     return value
 
 
@@ -40,11 +40,11 @@ with open('TrainingSet.csv', 'r') as csvfile:
     trainingSet = csv.DictReader(csvfile)
     i = 0
     for row in trainingSet:
-        rawData.append(row)
+        # rawData.append(row)
 
-        # if i < 50:
-        #     rawData.append(row)
-        #     i += 1
+        if i < 20:
+            rawData.append(row)
+            i += 1
 
 print(len(rawData))
 # Convert Dates into python datetime and other basic parsing
@@ -85,28 +85,51 @@ for row in rawData:
     row['Geographic_info2'] = int(row['Geographic_info2']) if row['Geographic_info2'] != '' else None
     row['Geographic_info3'] = int(row['Geographic_info3']) if row['Geographic_info3'] != '' else None
     row['Geographic_info4'] = stringtobool(row['Geographic_info4'])
-    row['Geographic_info5'] = stringValue(row['Geographic_info5'])
+    # row['Geographic_info5'] = stringValue(row['Geographic_info5'])
 
 # Find empty values
 count = dict()
+countNone = dict()
 for row in rawData:
     if -1 in row.values():
         for item in row.items():
             if item[1] is -1:
                 count[item[0]] = count[item[0]] + 1 if item[0] in count else 1
+    if None in row.values():
+        for item in row.items():
+            if item[1] is None:
+                countNone[item[0]] = countNone[item[0]] + 1 if item[0] in countNone else 1
 
 print('-1 in: ' + str(count))
+print('None in: ' + str(countNone))
 
 data = pd.DataFrame(rawData)
-
-# Drop Personal_Info5 as most of it is empty anyway
-data = data.drop(columns=['Personal_info5', 'Geographic_info3'])
-# Remove Rows with empty values
-data = data.dropna()
+# print(data.isnull().sum())
 
 # Feature Selection
-sel = VarianceThreshold(threshold=(.8 * (1 - .8)))
-data = sel.fit_transform(data)
+
+# Drop Personal_Info5 and Geographic_info3 as most of it is empty anyway
+data.drop(columns=['Personal_info5', 'Geographic_info3'], inplace=True)
+# Remove Rows with empty values
+data.dropna(inplace=True)
+
+# Remove rows with low variance
+remove = []
+for col in data:
+    var = data.loc[:, col].var()
+    # If variance is really low remember for removal it (except the Quote flag)
+    if var < (.8 * (1 - .8))and col != 'QuoteConversion_Flag':
+        remove.append(col)
+        print('Remove ' + col + ' with variance of ' + str(var))
+
+# Drop all rows with low variance
+data.drop(columns=remove, inplace=True)
+
+
+
+
 
 
 print(data.shape)
+
+
