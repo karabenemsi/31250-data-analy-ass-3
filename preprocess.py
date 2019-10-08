@@ -25,9 +25,9 @@ def string_to_value(string):
         value += (ord(char)-65) * pow(10, index)
     return value
 
+
 def format_amount(string):
     return int(''.join(string.split(',')))
-
 
 
 def str_to_timestamp(x):
@@ -36,6 +36,10 @@ def str_to_timestamp(x):
 
 data = pd.read_csv('TrainingSet.csv')
 print(data.shape)
+
+# Replace -1 with None as it represents an empty value
+# data.replace(-1, inplace=True)
+# print(data.describe())
 
 
 # Convert Date
@@ -63,12 +67,12 @@ print(data.isnull().sum())
 # Feature Pre-Selection
 
 keepColumns = ['QuoteConversion_Flag']
-# Drop Personal_Info5 and Geographic_info3 as most of it is empty anyway
-data.drop(columns=['Personal_info5', 'Geographic_info3'], inplace=True)
+# Drop Personal_info5 it has lot of empty
+data.drop(columns=['Personal_info5'], inplace=True)
 # Remove Rows with empty values
 data.dropna(inplace=True)
 
-# Change Categorical to num
+# Change Categorical
 dummies = dict()
 dummies['Geographic_info5'] = pd.get_dummies(data['Geographic_info5'])
 for dum in dummies:
@@ -77,14 +81,10 @@ for dum in dummies:
     data.drop(columns=[dum], inplace=True)
     data = pd.concat([data, dummies[dum]], axis=1)
 
-print(data.describe())
-
 # Remove rows with low variance
 remove = []
-print(keepColumns)
 for col in data:
     if col not in keepColumns:
-        print(col)
         var = data.loc[:, col].var()
         # If variance is really low remember for removal
         if var < (.8 * (1 - .8)):
@@ -92,8 +92,16 @@ for col in data:
             print('Remove ' + col + ' with variance of ' + str(var))
 
 # Drop all rows with low variance
-# data.drop(columns=remove, inplace=True)
+data.drop(columns=remove, inplace=True)
 
-print(data.shape)
+print('DataFrame shape after feature selection:' + str(data.shape))
+
+# Detect and Remove outliers
+
+
+# Normalize things
+
+
+# Get started on building Models
 
 
