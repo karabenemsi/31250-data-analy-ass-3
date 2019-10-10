@@ -17,12 +17,12 @@ def string_to_value(string):
     if string == '':
         return None
     if len(string) == 1:
-        # return ord(string) - 64
-        return ord(string)
+        return ord(string) - 64
+        # return ord(string)
     value = 0
     for index, char in enumerate(string):
-        value += ord(char)
-        # value += (ord(char) - 64) * pow(10, index)
+        # value += ord(char)
+        value += (ord(char) - 64) * pow(10, index)
     return value
 
 

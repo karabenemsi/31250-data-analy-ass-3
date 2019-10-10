@@ -33,7 +33,7 @@ def kFoldModel(model, X, y):
 
 ## Get Preprocessed Data
 train_target, train_data, test_data, train_df, test_df = preprocess.preprocess(
-    "TrainingSet.csv", 'TestSet.csv', limit=6000, remove_low_variance=True, remove_outliers=True)
+    "TrainingSet.csv", 'TestSet.csv', limit=None, remove_low_variance=True, remove_outliers=True)
 X_g_train, X_g_test, y_g_train, y_g_test = train_test_split(train_data, train_target, test_size=0.30)
 print(f'Trainset has {train_target.sum()} times 1')
 
