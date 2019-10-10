@@ -6,6 +6,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import StratifiedKFold
+from sklearn.svm import SVC
 from imblearn.over_sampling import SMOTE
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import GridSearchCV
@@ -62,18 +63,21 @@ result_predict['KNeighbors'] = np.array(model.predict(test_data))
 test_predict['KNeighbors'] = np.array(model.predict(X_g_test))
 
 ## SVM
-# KNeighbors = KNeighborsClassifier(n_neighbors=20, weights='uniform')
-# KNeighbors.fit(X_train, y_train)
-# y_predict = KNeighbors.predict(X_test)
+print('SVM')
+model = SVC(gamma='auto', kernel='rbf')
+model = kFoldModel(model, train_data, train_target)
+y_predict = model.predict(X_g_test)
+print(roc_auc_score(y_g_test, y_predict))
 
-# print(roc_auc_score(y_test, y_predict))
-# result_predict['SVM'] = np.array(model.predict(test_data))
-# test_predict['SVM'] = np.array(model.predict(X_g_test))
+result_predict['SVM'] = np.array(model.predict(test_data))
+test_predict['SVM'] = np.array(model.predict(X_g_test))
+
+
 
 ## Neural Network
 print('Start MLPClassifier')
-model = MLPClassifier(solver='adam', alpha=0.001, learning_rate_init=0.0001,
-                      hidden_layer_sizes=(15, 5), max_iter=500)
+model = MLPClassifier(solver='adam', alpha=0.001, learning_rate_init=0.001,
+                      hidden_layer_sizes=(7, 11), max_iter=1000)
 model = kFoldModel(model, train_data, train_target)
 y_predict = model.predict(X_g_test)
 print(roc_auc_score(y_g_test, y_predict))
