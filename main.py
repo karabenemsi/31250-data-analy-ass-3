@@ -4,9 +4,12 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors import RadiusNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import StratifiedKFold
 from sklearn.svm import SVC
+from sklearn.svm import LinearSVC
+from sklearn.naive_bayes import MultinomialNB
 from imblearn.over_sampling import SMOTE
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import GridSearchCV
@@ -72,12 +75,42 @@ print(roc_auc_score(y_g_test, y_predict))
 result_predict['SVM'] = np.array(model.predict(test_data))
 test_predict['SVM'] = np.array(model.predict(X_g_test))
 
+## Linear SVM
+print('Linear SVM')
+model = LinearSVC(random_state=0, tol=1e-5, dual=True, loss='squared_hinge')
+model = kFoldModel(model, train_data, train_target)
+y_predict = model.predict(X_g_test)
+print(roc_auc_score(y_g_test, y_predict))
+
+result_predict['LinearSVM'] = np.array(model.predict(test_data))
+test_predict['LinearSVM'] = np.array(model.predict(X_g_test))
+
+## Naive Bayes
+print('Naive Bayes')
+model = MultinomialNB()
+model = kFoldModel(model, train_data, train_target)
+y_predict = model.predict(X_g_test)
+print(roc_auc_score(y_g_test, y_predict))
+
+result_predict['NaiveBayes'] = np.array(model.predict(test_data))
+test_predict['NaiveBayes'] = np.array(model.predict(X_g_test))
+
+## SVM
+print('Radius Neighbors')
+model = RadiusNeighborsClassifier(radius=1.0)
+model = kFoldModel(model, train_data, train_target)
+y_predict = model.predict(X_g_test)
+print(roc_auc_score(y_g_test, y_predict))
+
+result_predict['radiusNeighbors'] = np.array(model.predict(test_data))
+test_predict['radiusNeighbors'] = np.array(model.predict(X_g_test))
+
 
 
 ## Neural Network
 print('Start MLPClassifier')
-model = MLPClassifier(solver='adam', alpha=0.001, learning_rate_init=0.001,
-                      hidden_layer_sizes=(7, 11), max_iter=1000)
+model = MLPClassifier(solver='adam', alpha=0.0001, learning_rate_init=0.001,
+                      hidden_layer_sizes=(24, 23, 22), max_iter=1000)
 model = kFoldModel(model, train_data, train_target)
 y_predict = model.predict(X_g_test)
 print(roc_auc_score(y_g_test, y_predict))
