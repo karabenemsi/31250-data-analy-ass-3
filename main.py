@@ -86,21 +86,21 @@ result_predict['LinearSVM'] = np.array(model.predict(test_data))
 test_predict['LinearSVM'] = np.array(model.predict(X_g_test))
 
 ## Naive Bayes
-print('Naive Bayes')
-model = MultinomialNB()
-model = kFoldModel(model, train_data, train_target)
-y_predict = model.predict(X_g_test)
-print(roc_auc_score(y_g_test, y_predict))
+#print('Naive Bayes')
+#model = MultinomialNB()
+#model = kFoldModel(model, train_data, train_target)
+#y_predict = model.predict(X_g_test)
+#print(roc_auc_score(y_g_test, y_predict))
 
-result_predict['NaiveBayes'] = np.array(model.predict(test_data))
-test_predict['NaiveBayes'] = np.array(model.predict(X_g_test))
+#result_predict['NaiveBayes'] = np.array(model.predict(test_data))
+#test_predict['NaiveBayes'] = np.array(model.predict(X_g_test))
 
 ## SVM
-print('Radius Neighbors')
-model = RadiusNeighborsClassifier(radius=1.0)
-model = kFoldModel(model, train_data, train_target)
-y_predict = model.predict(X_g_test)
-print(roc_auc_score(y_g_test, y_predict))
+#print('Radius Neighbors')
+#model = RadiusNeighborsClassifier(radius=1.0)
+#model = kFoldModel(model, train_data, train_target)
+#y_predict = model.predict(X_g_test)
+#print(roc_auc_score(y_g_test, y_predict))
 
 result_predict['radiusNeighbors'] = np.array(model.predict(test_data))
 test_predict['radiusNeighbors'] = np.array(model.predict(X_g_test))
