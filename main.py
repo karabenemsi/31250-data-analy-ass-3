@@ -95,7 +95,7 @@ final = []
 width = len(result_df.keys()) - 1
 for row in result_df['Sum']:
     if 0 < row < width:
-        final.append(1 if row > (width / 2) else 0)
+        final.append(1 if row >= (width / 2) else 0)
         count += 1
     else:
         final.append(0 if row == 0 else 1)
@@ -111,7 +111,7 @@ final = []
 width = len(t_df.keys()) - 1
 for row in t_df['Sum']:
     if 0 < row < width:
-        final.append(1 if row > (width / 2) else 0)
+        final.append(1 if row >= (width / 2) else 0)
         count += 1
     else:
         final.append(0 if row == 0 else 1)
