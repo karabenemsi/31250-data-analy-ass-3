@@ -492,3 +492,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/latex,python,pycharm,windows
+
+
+Kaggle_Submission.csv

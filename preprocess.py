@@ -3,7 +3,8 @@ import numpy as np
 import pandas as pd
 
 
-from sklearn import preprocessing
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import normalize
 import helpers
 
 pd.set_option('display.width', 0)
@@ -50,16 +51,19 @@ def preprocess(train_file, test_file, limit=None, remove_low_variance=True, remo
     # Extract dependent variable from dataset
 
     train_dv = np.array(train_df['QuoteConversion_Flag'])
-    train_data = np.array(train_df.drop(columns=['QuoteConversion_Flag']))
-    test_data = np.array(test_df)
+    train_data = np.array(train_df.drop(columns=['QuoteConversion_Flag','Quote_ID']))
+    test_data = np.array(test_df.drop(columns=['Quote_ID']))
+
+    # Extract numeric values to scale them
 
     # Scale things
-    standard_scaler = preprocessing.StandardScaler()
-    train_data = standard_scaler.fit_transform(train_data)
-    test_data = standard_scaler.fit_transform(test_data)
+    standard_scaler = StandardScaler()
+    standard_scaler.fit(train_data)
+    train_data = standard_scaler.transform(train_data)
+    test_data = standard_scaler.transform(test_data)
 
     # Normalize it to be more gaussian
-    train_data = preprocessing.normalize(train_data, return_norm=False)
-    test_data = preprocessing.normalize(test_data, return_norm=False)
+    train_data = normalize(train_data, return_norm=False, axis=0)
+    test_data = normalize(test_data, return_norm=False, axis=0)
 
     return train_dv, train_data, test_data, train_df, test_df
