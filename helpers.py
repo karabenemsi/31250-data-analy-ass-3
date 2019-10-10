@@ -17,15 +17,17 @@ def string_to_value(string):
     if string == '':
         return None
     if len(string) == 1:
-        return ord(string) - 65
+        # return ord(string) - 64
+        return ord(string)
     value = 0
     for index, char in enumerate(string):
-        value += (ord(char) - 65) * pow(10, index)
+        value += ord(char)
+        # value += (ord(char) - 64) * pow(10, index)
     return value
 
 
 def format_amount(string):
-    return int(''.join(string.split(',')))
+    return int(string.replace(',', ''))
 
 
 def str_to_timestamp(date_string):
@@ -74,7 +76,7 @@ def categorical_to_many(df, columns, keep_columns=None):
 
 
 def remove_low_variance(df, keep_columns=None):
-    # Remove rows with low variance
+    # Remove features with low variance
     if keep_columns is None:
         keep_columns = []
     remove = []
@@ -86,7 +88,7 @@ def remove_low_variance(df, keep_columns=None):
                 remove.append(col)
                 print('Remove ' + col + ' with variance of ' + str(var))
 
-    # Drop all rows with low variance
+    # Drop all features with low variance
     return df.drop(columns=remove), remove
 
 
