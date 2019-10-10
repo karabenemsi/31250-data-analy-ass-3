@@ -28,8 +28,8 @@ def format_amount(string):
     return int(''.join(string.split(',')))
 
 
-def str_to_timestamp(x):
-    return int(datetime.strptime(x.zfill(10), '%d/%m/%Y').timestamp())
+def str_to_timestamp(date_string):
+    return int(datetime.strptime(date_string.zfill(10), '%d/%m/%Y').timestamp())
 
 
 def parse_data(df):

@@ -2,7 +2,6 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 
-
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import normalize
 import helpers
@@ -35,7 +34,7 @@ def preprocess(train_file, test_file, limit=None, remove_low_variance=True, remo
     test_df.fillna(method='ffill', inplace=True)
 
     train_df, keepColumns = helpers.categorical_to_many(train_df, ['Geographic_info5'], keepColumns)
-    test_df, a = helpers.categorical_to_many(test_df, ['Geographic_info5'], keepColumns)
+    test_df,a = helpers.categorical_to_many(test_df, ['Geographic_info5'], keepColumns)
 
     if remove_low_variance:
         train_df, removed_columns = helpers.remove_low_variance(train_df, keepColumns)
@@ -51,7 +50,7 @@ def preprocess(train_file, test_file, limit=None, remove_low_variance=True, remo
     # Extract dependent variable from dataset
 
     train_dv = np.array(train_df['QuoteConversion_Flag'])
-    train_data = np.array(train_df.drop(columns=['QuoteConversion_Flag','Quote_ID']))
+    train_data = np.array(train_df.drop(columns=['QuoteConversion_Flag', 'Quote_ID']))
     test_data = np.array(test_df.drop(columns=['Quote_ID']))
 
     # Extract numeric values to scale them
