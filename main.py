@@ -129,7 +129,7 @@ test_predict['radiusNeighbors'] = np.array(model.predict(X_g_test))
 # Neural Network
 print('Start MLPClassifier')
 model = MLPClassifier(solver='adam', alpha=0.0001, learning_rate_init=0.001,
-                      hidden_layer_sizes=(24, 23, 22), max_iter=1000)
+                      hidden_layer_sizes=(100, 50, 25), max_iter=2000)
 model = k_fold_model(model, train_data, train_target)
 y_predict = model.predict(X_g_test)
 print(roc_auc_score(y_g_test, y_predict))

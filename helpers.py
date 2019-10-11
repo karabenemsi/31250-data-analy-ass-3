@@ -49,10 +49,11 @@ def parse_data(df):
     df['Geographic_info4'] = df['Geographic_info4'].apply(string_to_bool)
 
     # Convert string to int values
+    # TODO: instead do one to many
     df['Field_info1'] = df['Field_info1'].apply(string_to_value)
     df['Coverage_info3'] = df['Coverage_info3'].apply(string_to_value)
-    df['Sales_info4'] = df['Sales_info4'].apply(string_to_value)
-    df['Personal_info3'] = df['Personal_info3'].apply(string_to_value)
+    # df['Sales_info4'] = df['Sales_info4'].apply(string_to_value)
+    # df['Personal_info3'] = df['Personal_info3'].apply(string_to_value)
     df['Property_info3'] = df['Property_info3'].apply(string_to_value)
 
     # Convert special amount to int
@@ -66,7 +67,7 @@ def categorical_to_many(df, columns, keep_columns=None):
         keep_columns = []
     dummies = dict()
     for col in columns:
-        dummies[col] = pd.get_dummies(df[col])
+        dummies[col] = pd.get_dummies(df[col]).add_prefix(col + '_')
     for dum in dummies:
         # Keep generated columns as they might include lots of empty(same) values
         keep_columns = keep_columns + list(dummies[dum].keys())
