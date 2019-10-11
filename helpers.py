@@ -70,7 +70,7 @@ def categorical_to_many(df, columns, keep_columns=None):
         keep_columns = []
     dummies = dict()
     for col in columns:
-        dummies[col] = pd.get_dummies(df[col])
+        dummies[col] = pd.get_dummies(df[col]).add_prefix(col + '_')
     for dum in dummies:
         # Keep generated columns as they might include lots of empty(same) values
         keep_columns = keep_columns + list(dummies[dum].keys())

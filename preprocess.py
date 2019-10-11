@@ -22,9 +22,20 @@ def preprocess(train_file, test_file, limit=None, remove_low_variance=True, remo
     train_df = helpers.parse_data(train_df)
     test_df = helpers.parse_data(test_df)
 
+    keepColumns = ['QuoteConversion_Flag']
+
+    train_df, keepColumns = helpers.categorical_to_many(train_df, ['Geographic_info5'], keepColumns)
+    test_df,a = helpers.categorical_to_many(test_df, ['Geographic_info5'], keepColumns)
+
+    # Fill up train and test frame to have the same column length
+    for key in list(set(train_df.keys()) - set(test_df.keys())):
+        test_df.loc[:, key] = pd.Series(np.zeros(len(test_df['Original_Quote_Date'])), index=test_df.index)
+    for key in list(set(test_df.keys()) - set(train_df.keys())):
+        train_df.loc[:, key] = pd.Series(np.zeros(len(train_df['Original_Quote_Date'])), index=train_df.index)
+
+
     # Feature Pre-Selection
 
-    keepColumns = ['QuoteConversion_Flag']
     # Drop Personal_info5, it has lot of empty values
     train_df.drop(columns=['Personal_info5'], inplace=True)
     test_df.drop(columns=['Personal_info5'], inplace=True)
@@ -33,8 +44,7 @@ def preprocess(train_file, test_file, limit=None, remove_low_variance=True, remo
     # Fill empty values in test dataset, both are YN-Values, replace with previous value
     test_df.fillna(method='ffill', inplace=True)
 
-    train_df, keepColumns = helpers.categorical_to_many(train_df, ['Geographic_info5'], keepColumns)
-    test_df,a = helpers.categorical_to_many(test_df, ['Geographic_info5'], keepColumns)
+
 
     if remove_low_variance:
         train_df, removed_columns = helpers.remove_low_variance(train_df, keepColumns)
@@ -51,7 +61,7 @@ def preprocess(train_file, test_file, limit=None, remove_low_variance=True, remo
 
     train_dv = np.array(train_df['QuoteConversion_Flag'])
     train_data = np.array(train_df.drop(columns=['QuoteConversion_Flag', 'Quote_ID']))
-    test_data = np.array(test_df.drop(columns=['Quote_ID']))
+    test_data = np.array(test_df.drop(columns=['QuoteConversion_Flag','Quote_ID']))
 
     # Extract numeric values to scale them
 

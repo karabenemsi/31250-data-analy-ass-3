@@ -1,18 +1,44 @@
 % !TeX spellcheck = en_US
 % !TEX root = Ausarbeitung.tex
 
-\section{Initial data exploration}
-\subsection{Attribute features}
+\section{The data mining problem}
+
+In the given scenario we have received a data set. This contains data points for various customers of an insurance company. The aim of data mining is to predict whether a customer will purchase an insurance. 
+
+The dataset contains multiple features, that have been explored in Assesment 2 of this subject. The list of features contains different type of features. Some of them are dichotomous, some are categorical and some are rational or ordinal features. This wide variety will require some preprocessing to build a good model. Most of the features contain characters as values, one of them contains a date in australian format.
+
+The goal for this problem will be to categorize each datapoint. There are only two categories available: 1 for "will purchase insurance" and 0 for "will not purchase insurance".
 
 
 \section{Preprocessing and transformation}
 
+To provide a good starting point for the classifiers I preprocess the raw data. To solve the problem I use python with jupyter notebooks. The following explanations will be supported by short listings. The main sourcecode can be found in the appendix of this report.
+
+After importing the data from csv, I start by converting the date into a unix timestamp and all ordinal features into numbers. I also convert dichotomous features that are coded with "Y" and "N" into machine readable "0" and "1", respectively.
+
+\lstinputlisting[language=Python,  linerange={37-43,48-52}, caption={An excerpt of the parse function}]{../helpers.py}
+
+After parsing all data I convert categorical features into many flags. This makes it easier for following classifiers to work with these features. To do this I use a function of \texttt{pandas} called \texttt{get\_dummies}. After adding those flags I delete the original feature as it would contain redundant information. The shown function can handle multiple feature conversions at once.
+
+\lstinputlisting[language=Python,  linerange={57-69}, caption={The function to convert one categorical feature into many dichotomous}]{../helpers.py}
+
+After converting the features, the training set and and test set could contain different amount of features (flags). To solve this, I populate the sets with all missing flags.
+
+\lstinputlisting[language=Python,  linerange={33-37}, caption={Add missing flag features to both sets}]{../preprocess.py}
+
+
 \section{Attacking the problem}
 
 \section{Classification techniques}
+
+
+% Parameter optimization!
 
 \section{The best classifier}
 
 
 
 
+
+
+ Quote\_ID, Original\_Quote\_Date, QuoteConversion\_Flag, Field\_info1, Field\_info2, Field\_info3, Field\_info4, Coverage\_info1, Coverage\_info2, Coverage\_info3, Sales\_info1, Sales\_info2, Sales\_info3, Sales\_info4, Sales\_info5, Personal\_info1, Personal\_info2, Personal\_info3, Personal\_info4, Personal\_info5, Property\_info1, Property\_info2, Property\_info3, Property\_info4, Property\_info5, Geographic\_info1, Geographic\_info2, Geographic\_info3, Geographic\_info4, Geographic\_info5.
