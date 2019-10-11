@@ -129,7 +129,7 @@ test_predict['radiusNeighbors'] = np.array(model.predict(X_g_test))
 # Neural Network
 print('Start MLPClassifier')
 model = MLPClassifier(solver='adam', alpha=0.0001, learning_rate_init=0.001,
-                      hidden_layer_sizes=(24, 23, 22), max_iter=1000)
+                      hidden_layer_sizes=(100, 23, 22, 10, 10, 5), max_iter=1000)
 model = k_fold_model(model, train_data, train_target)
 y_predict = model.predict(X_g_test)
 print(roc_auc_score(y_g_test, y_predict))
@@ -145,9 +145,9 @@ result_df = decide_for_unsure(result_df, 'TestSet')
 print('\n Test:')
 # Do it for test to
 t_df = pd.DataFrame(test_predict)
-t_df = decide_for_unsure(t_df, 'TestSet')
+t_df = decide_for_unsure(t_df, 'TrainingSet')
 
-# Save Result to file
+# Save Result to filen
 test_df['QuoteConversion_Flag'] = pd.Series(result_df['Final'], index=test_df.index)
 
 toDrop = []
