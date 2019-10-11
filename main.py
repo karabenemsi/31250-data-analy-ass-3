@@ -36,6 +36,7 @@ def decide_for_unsure(df, name):
     df['Sum'] = df.sum(axis=1)
     final = []
     width = len(df.keys()) - 1
+    print(df.keys())
     count = []
     # init counter
     for i in range(0, width + 1):
@@ -57,7 +58,7 @@ def decide_for_unsure(df, name):
 
 # Get Preprocessed Data
 train_target, train_data, test_data, train_df, test_df = preprocess.preprocess(
-    "TrainingSet.csv", 'TestSet.csv', limit=None, remove_low_variance=True, remove_outliers=True)
+    "TrainingSet.csv", 'TestSet.csv', limit=1000, remove_low_variance=True, remove_outliers=True)
 X_g_train, X_g_test, y_g_train, y_g_test = train_test_split(train_data, train_target, test_size=0.30)
 print(f'TrainSet has {train_target.sum()} times 1')
 
@@ -97,7 +98,7 @@ test_predict['SVM'] = np.array(model.predict(X_g_test))
 
 # Linear SVM
 print('Linear SVM')
-model = LinearSVC(random_state=0, tol=1e-5, dual=True, loss='squared_hinge')
+model = LinearSVC(random_state=0, tol=1e-5, dual=True, loss='squared_hinge', max_iter=2000)
 model = k_fold_model(model, train_data, train_target)
 y_predict = model.predict(X_g_test)
 print(roc_auc_score(y_g_test, y_predict))
@@ -141,11 +142,10 @@ test_predict['mlpNetwork'] = np.array(model.predict(X_g_test))
 result_df = pd.DataFrame(result_predict)
 result_df = decide_for_unsure(result_df, 'TestSet')
 
-print('/n Test:')
+print('\n Test:')
 # Do it for test to
 t_df = pd.DataFrame(test_predict)
-t_df = pd.DataFrame(test_predict)
-t_df = decide_for_unsure(result_df, 'TestSet')
+t_df = decide_for_unsure(t_df, 'TestSet')
 
 # Save Result to file
 test_df['QuoteConversion_Flag'] = pd.Series(result_df['Final'], index=test_df.index)
