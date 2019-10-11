@@ -16,6 +16,8 @@ def string_to_bool(string):
 def string_to_value(string):
     if string == '':
         return None
+    # if string == '-1' or string == -1:
+    #     return None
     if len(string) == 1:
         return ord(string) - 64
         # return ord(string)
@@ -34,11 +36,13 @@ def str_to_timestamp(date_string):
     return int(datetime.strptime(date_string.zfill(10), '%d/%m/%Y').timestamp())
 
 
-def parse_data(df):
-    # Replace -1 with None as it represents an empty value
-    # data.replace(-1, inplace=True)
-    # print(data.describe())
+def minus_to_none(value):
+    if value == -1:
+        return None
+    return value
 
+
+def parse_data(df):
     # Convert Date
     df['Original_Quote_Date'] = df['Original_Quote_Date'].apply(str_to_timestamp)
 
