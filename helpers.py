@@ -35,29 +35,22 @@ def str_to_timestamp(date_string):
 
 
 def parse_data(df):
-    # Replace -1 with None as it represents an empty value
-    # data.replace(-1, inplace=True)
-    # print(data.describe())
-
     # Convert Date
     df['Original_Quote_Date'] = df['Original_Quote_Date'].apply(str_to_timestamp)
-
     # Convert bool-values to int of 1 and 0
     df['Field_info4'] = df['Field_info4'].apply(string_to_bool)
     df['Personal_info1'] = df['Personal_info1'].apply(string_to_bool)
     df['Property_info1'] = df['Property_info1'].apply(string_to_bool)
     df['Geographic_info4'] = df['Geographic_info4'].apply(string_to_bool)
-
     # Convert string to int values
-    # TODO: instead do one to many
     df['Field_info1'] = df['Field_info1'].apply(string_to_value)
     df['Coverage_info3'] = df['Coverage_info3'].apply(string_to_value)
     df['Sales_info4'] = df['Sales_info4'].apply(string_to_value)
     df['Personal_info3'] = df['Personal_info3'].apply(string_to_value)
     df['Property_info3'] = df['Property_info3'].apply(string_to_value)
-
     # Convert special amount to int
     df['Field_info3'] = df['Field_info3'].apply(format_amount)
+
     return df
 
 

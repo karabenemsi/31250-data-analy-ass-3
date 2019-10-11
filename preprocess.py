@@ -37,7 +37,6 @@ def preprocess(train_file, test_file, limit=None, remove_low_variance=True, remo
         train_df.loc[:, key] = pd.Series(np.zeros(len(train_df['Original_Quote_Date'])), index=train_df.index)
 
     # Feature Selection
-
     # Drop Personal_info5, it has lot of empty values
     train_df.drop(columns=['Personal_info5'], inplace=True)
     test_df.drop(columns=['Personal_info5'], inplace=True)
