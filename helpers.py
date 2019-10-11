@@ -52,8 +52,8 @@ def parse_data(df):
     # TODO: instead do one to many
     df['Field_info1'] = df['Field_info1'].apply(string_to_value)
     df['Coverage_info3'] = df['Coverage_info3'].apply(string_to_value)
-    # df['Sales_info4'] = df['Sales_info4'].apply(string_to_value)
-    # df['Personal_info3'] = df['Personal_info3'].apply(string_to_value)
+    df['Sales_info4'] = df['Sales_info4'].apply(string_to_value)
+    df['Personal_info3'] = df['Personal_info3'].apply(string_to_value)
     df['Property_info3'] = df['Property_info3'].apply(string_to_value)
 
     # Convert special amount to int

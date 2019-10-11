@@ -25,9 +25,9 @@ def preprocess(train_file, test_file, limit=None, remove_low_variance=True, remo
     keepColumns = ['QuoteConversion_Flag']
 
     # TODO: Do this for all categorical
-    train_df, keepColumns = helpers.categorical_to_many(train_df, ['Geographic_info5', 'Sales_info4', 'Personal_info3'],
+    train_df, keepColumns = helpers.categorical_to_many(train_df, ['Geographic_info5'],
                                                         keepColumns)
-    test_df, a = helpers.categorical_to_many(test_df, ['Geographic_info5', 'Sales_info4', 'Personal_info3'],
+    test_df, a = helpers.categorical_to_many(test_df, ['Geographic_info5'],
                                              keepColumns)
 
     # Fill up train and test frame to have the same column length
@@ -70,8 +70,10 @@ def preprocess(train_file, test_file, limit=None, remove_low_variance=True, remo
 
     # Scale things
     # Only Scale non-boolean
-    #  Original_Quote_Date  Field_info1  Field_info3  Coverage_info1  Coverage_info2  Coverage_info3  Sales_info1  Sales_info2  Sales_info3   Sales_info5  Personal_info2  Property_info3  Property_info4  Property_info5  Geographic_info1  Geographic_info2  Geographic_info3
-    scale_indices = [0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 13, 14, 15, 16]
+    #  Original_Quote_Date  Field_info1  Field_info3  Coverage_info1  Coverage_info2  Coverage_info3  XSales_info1  Sales_info2  Sales_info3   Sales_info4   Sales_info5  Personal_info2  Personal_info3  Property_info3  XProperty_info4  Property_info5  Geographic_info1  Geographic_info2  Geographic_info3
+    #  Original_Quote_Date  Field_info1  Field_info3  Coverage_info1  Coverage_info2  Coverage_info3  XSales_info1  Sales_info2  Sales_info3                 Sales_info5  Personal_info2  Property_info3                  XProperty_info4  Property_info5  Geographic_info1  Geographic_info2  Geographic_info3
+    scale_indices = [0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 12, 12, 15, 16, 17, 18]
+    # scale_indices = range(0, len(train_data[0]))
 
     train_scale_array = train_data[:, scale_indices]
     test_scale_array = test_data[:,scale_indices]

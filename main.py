@@ -44,7 +44,7 @@ def decide_for_unsure(df, name):
     for row in df['Sum']:
         if 0 < row < width:
             # Do +1 as most of the data points tend to be 0 rather than 1
-            final.append(1 if row > ((width / 2) + 1) else 0)
+            final.append(1 if row > (width / 2) else 0)
             count[row] += 1
         else:
             count[row] += 1
@@ -58,7 +58,7 @@ def decide_for_unsure(df, name):
 
 # Get Preprocessed Data
 train_target, train_data, test_data, train_df, test_df = preprocess.preprocess(
-    "TrainingSet.csv", 'TestSet.csv', limit=1000, remove_low_variance=True, remove_outliers=True)
+    "TrainingSet.csv", 'TestSet.csv', limit=None, remove_low_variance=True, remove_outliers=True)
 X_g_train, X_g_test, y_g_train, y_g_test = train_test_split(train_data, train_target, test_size=0.30)
 print(f'TrainSet has {train_target.sum()} times 1')
 
@@ -76,15 +76,15 @@ print(roc_auc_score(y_g_test, y_predict))
 result_predict['RandomForest'] = np.array(model.predict(test_data))
 test_predict['RandomForest'] = np.array(model.predict(X_g_test))
 
-# k-nearest neighbour
-print('Start k-nearest neighbour')
-model = KNeighborsClassifier(n_neighbors=20, weights='uniform', n_jobs=-1)
-model = k_fold_model(model, train_data, train_target)
-y_predict = model.predict(X_g_test)
-print(roc_auc_score(y_g_test, y_predict))
-
-result_predict['KNeighbors'] = np.array(model.predict(test_data))
-test_predict['KNeighbors'] = np.array(model.predict(X_g_test))
+# # k-nearest neighbour
+# print('Start k-nearest neighbour')
+# model = KNeighborsClassifier(n_neighbors=20, weights='uniform', n_jobs=-1)
+# model = k_fold_model(model, train_data, train_target)
+# y_predict = model.predict(X_g_test)
+# print(roc_auc_score(y_g_test, y_predict))
+#
+# result_predict['KNeighbors'] = np.array(model.predict(test_data))
+# test_predict['KNeighbors'] = np.array(model.predict(X_g_test))
 
 # SVM
 print('SVM')
@@ -96,15 +96,15 @@ print(roc_auc_score(y_g_test, y_predict))
 result_predict['SVM'] = np.array(model.predict(test_data))
 test_predict['SVM'] = np.array(model.predict(X_g_test))
 
-# Linear SVM
-print('Linear SVM')
-model = LinearSVC(random_state=0, tol=1e-5, dual=True, loss='squared_hinge', max_iter=2000)
-model = k_fold_model(model, train_data, train_target)
-y_predict = model.predict(X_g_test)
-print(roc_auc_score(y_g_test, y_predict))
-
-result_predict['LinearSVM'] = np.array(model.predict(test_data))
-test_predict['LinearSVM'] = np.array(model.predict(X_g_test))
+# # Linear SVM
+# print('Linear SVM')
+# model = LinearSVC(random_state=0, tol=1e-5, dual=True, loss='squared_hinge', max_iter=2000)
+# model = k_fold_model(model, train_data, train_target)
+# y_predict = model.predict(X_g_test)
+# print(roc_auc_score(y_g_test, y_predict))
+#
+# result_predict['LinearSVM'] = np.array(model.predict(test_data))
+# test_predict['LinearSVM'] = np.array(model.predict(X_g_test))
 
 # Naive Bayes
 # print('Naive Bayes')
@@ -123,13 +123,13 @@ test_predict['LinearSVM'] = np.array(model.predict(X_g_test))
 # y_predict = model.predict(X_g_test)
 # print(roc_auc_score(y_g_test, y_predict))
 
-result_predict['radiusNeighbors'] = np.array(model.predict(test_data))
-test_predict['radiusNeighbors'] = np.array(model.predict(X_g_test))
+# result_predict['radiusNeighbors'] = np.array(model.predict(test_data))
+# test_predict['radiusNeighbors'] = np.array(model.predict(X_g_test))
 
 # Neural Network
 print('Start MLPClassifier')
 model = MLPClassifier(solver='adam', alpha=0.0001, learning_rate_init=0.001,
-                      hidden_layer_sizes=(100, 50, 25), max_iter=2000)
+                      hidden_layer_sizes=(100, 25), max_iter=2000)
 model = k_fold_model(model, train_data, train_target)
 y_predict = model.predict(X_g_test)
 print(roc_auc_score(y_g_test, y_predict))
