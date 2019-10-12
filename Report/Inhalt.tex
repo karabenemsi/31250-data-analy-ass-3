@@ -17,25 +17,25 @@ To provide a good starting point for the classifiers I preprocess the raw data. 
 \subsection{Parsing the data}
 After importing the data from csv, I start by converting the date into a unix timestamp and all ordinal features into numbers. I also convert dichotomous features that are coded with "Y" and "N" into machine readable "0" and "1", respectively.
 
-\lstinputlisting[language=Python,  linerange={45-49,58-61}, caption={An excerpt of the parse function}]{../helpers.py}
+\lstinputlisting[language=Python,  linerange={41-43,54-57}, caption={An excerpt of the parse function}]{../helpers.py}
 
 \subsection{Categorical data}
 After parsing all data I convert categorical features into many flags. This makes it easier for following classifiers to work with these features. To do this I use a function of \texttt{pandas} called \texttt{get\_dummies}. After adding those flags I delete the original feature as it would contain redundant information. The shown function can handle multiple feature conversions at once.
 
-\lstinputlisting[language=Python,  linerange={64-76}, caption={The function to convert one categorical feature into many dichotomous}]{../helpers.py}
+\lstinputlisting[language=Python,  linerange={60-72}, caption={The function to convert one categorical feature into many dichotomous}]{../helpers.py}
 
 After converting the features, the training set and and test set could contain different amount of features (flags). To solve this, I populate the sets with all missing flags.
 
-\lstinputlisting[language=Python,  linerange={30-34}, caption={Add missing flag features to both sets}]{../preprocess.py}
+\lstinputlisting[language=Python,  linerange={29-33}, caption={Add missing flag features to both sets}]{../preprocess.py}
 
 \subsection{Feature Selection}
 The next preprocessing step is feature selection. I remove different features depending on different reasons. The first removed feature is \texttt{Personal\_info5} which contains lots of empty values and a low variance. After doing so I delete all rows with empty values inside the training set and fill all empty values inside the test set. I delete emtpy values inside the training set and fill them inside the test set because the empty values inside the training set are more numerous and appear in different features. Inside the test set they only appear in two dichotomous features and less often.
 
-\lstinputlisting[language=Python, linerange={39-45}, caption={Removal of specifc features and emtpy values}]{../preprocess.py}
+\lstinputlisting[language=Python, linerange={37-43}, caption={Removal of specifc features and emtpy values}]{../preprocess.py}
 
 Next I remove all features with a variance under $0.16$. I remove those because they don't contain enough information to classify the data and only increase the dimensionality of the data set. The feature I remove in the training set, I also remove in the test set. 
 
-\lstinputlisting[language=Python, linerange={79-93}, caption={Removal of features with low variance}]{../helpers.py}
+\lstinputlisting[language=Python, linerange={75-89}, caption={Removal of features with low variance}]{../helpers.py}
 
 \subsection{Outliers}
 
@@ -84,18 +84,29 @@ The selected parameters set the number of trees inside the forest to $185$. This
 
 \subsection{Support Vector Machines}
 
+A SVM tries to find a hyperplane in a n-dimensional room, where n is the number of features provided. The hyperplane should distinctly classify all data points. It will look for the hyperplane with the biggest distance between points of each class.
+
 \lstinputlisting[language=Python, linerange={81-84}, caption={\texttt{SVC} used for classifing}]{../main.py}
 
 \subsection{Multilayer Perceptron}
 
-\lstinputlisting[language=Python, linerange={92-96}, caption={\texttt{MLPClassifier} used for classifing}]{../main.py}
+Neural Networks with multiple fully connected single neurons are called Multilayer Perceptron Networks (MLP networks). They are feedforward artifical neural networks and uses backpropagation to learn in each iteration of its training. The selected network for this data mining problem consists of 4 layers. The two hidden ones are specified inside the parameters of the constructor.
 
+\lstinputlisting[language=Python, linerange={92-96}, caption={\texttt{MLPClassifier} used for classifing}]{../main.py}
 
 \section{The best classifier}
 
+For the given dataset and problem the random forest achieves the best results for me. I therefore selected the random forest as the best classifier. The problem is a unbalanced data set and is not easily linearly solvable. Therefore the Vector machine has its problems with this type of data set. The MLP is not able to reach the performance of the random forest in my case.
+
+\subsection{Classifer type}
+As described above, the random forest belongs to the ensemble classifiers. It obtains its result from a large number of decision trees and counts the votes together to make the classification. This increases the accuracy in comparison to a single tree and also overfitting becomes a minor problem. It is also true that with increased variation the accuracy increases to a certain degree.
+
+\subsection{Performance}
+
+Using the training set, the random forest reached a AUC of $0.76$. That's just a little bit better than the other algorithms. Increasing the number of trees did improve the performance on the training set but decreased the performance of the test set on kaggle. Using python to run the random forest the execution was stable and fast compared to SVM or the MLP. Using multiple runs of the random forest, I was able to improve the score up to $0.77$
+
+\subsection{Solving the problem}
 
 
 
 
-
- Quote\_ID, Original\_Quote\_Date, QuoteConversion\_Flag, Field\_info1, Field\_info2, Field\_info3, Field\_info4, Coverage\_info1, Coverage\_info2, Coverage\_info3, Sales\_info1, Sales\_info2, Sales\_info3, Sales\_info4, Sales\_info5, Personal\_info1, Personal\_info2, Personal\_info3, Personal\_info4, Personal\_info5, Property\_info1, Property\_info2, Property\_info3, Property\_info4, Property\_info5, Geographic\_info1, Geographic\_info2, Geographic\_info3, Geographic\_info4, Geographic\_info5.

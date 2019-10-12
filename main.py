@@ -66,15 +66,24 @@ result_predict = dict()
 test_predict = dict()
 
 # Random Forest
-print('Start Random Forest')
-model = RandomForestClassifier(n_estimators=185, criterion='entropy', n_jobs=-1)
-model = smote_train_model(model, X_g_train, y_g_train)
-y_predict = model.predict(X_g_test)
-print(roc_auc_score(y_g_test, y_predict))
+for i in range(0,20):
+    print('Start Random Forest')
+    model = RandomForestClassifier(n_estimators=185, criterion='entropy', n_jobs=-1)
+    model = smote_train_model(model, X_g_train, y_g_train)
+    y_predict = model.predict(X_g_test)
+    print(roc_auc_score(y_g_test, y_predict))
 
-result_predict['RandomForest'] = np.array(model.predict(test_data))
-test_predict['RandomForest'] = np.array(model.predict(X_g_test))
-save_to_file(test_df, result_predict['RandomForest'], '_rf')
+    result_predict['RandomForest_' + str(i)] = np.array(model.predict(test_data))
+    test_predict['RandomForest_' + str(i)] = np.array(model.predict(X_g_test))
+
+result_df = pd.DataFrame(result_predict)
+t_df = pd.DataFrame(test_predict)
+
+rf_df = decide_for_unsure(result_df, 'TestSet')
+rf2_df = decide_for_unsure(t_df, 'TrainSet')
+
+print(roc_auc_score(y_g_test, rf2_df['Final']))
+save_to_file(test_df, rf_df['Final'], '_rf')
 
 # SVM
 print('SVM')
