@@ -80,32 +80,41 @@ The random forest is an ensemble classification method. It will build many decis
 
 The selected parameters set the number of trees inside the forest to $185$. This number gave optimal results without overfitting. Overfitting with too many trees can have an impact on the performance of the random forest. The selected criterion "entropy" uses information gain to build the decision trees.
 
-\lstinputlisting[language=Python, linerange={70-73}, caption={\texttt{RandomForestClassifier} used for classifing}]{../main.py}
+\lstinputlisting[language=Python, linerange={71-74}, caption={\texttt{RandomForestClassifier} used for classifing}]{../main.py}
 
 \subsection{Support Vector Machines}
 
 A SVM tries to find a hyperplane in a n-dimensional room, where n is the number of features provided. The hyperplane should distinctly classify all data points. It will look for the hyperplane with the biggest distance between points of each class.
 
-\lstinputlisting[language=Python, linerange={81-84}, caption={\texttt{SVC} used for classifing}]{../main.py}
+\lstinputlisting[language=Python, linerange={90-93}, caption={\texttt{SVC} used for classifing}]{../main.py}
 
 \subsection{Multilayer Perceptron}
 
-Neural Networks with multiple fully connected single neurons are called Multilayer Perceptron Networks (MLP networks). They are feedforward artifical neural networks and uses backpropagation to learn in each iteration of its training. The selected network for this data mining problem consists of 4 layers. The two hidden ones are specified inside the parameters of the constructor.
+Neural Networks with multiple fully connected single neurons are called Multilayer Perceptron Networks (MLP networks). They are feed forward artificial neural networks and uses backpropagation to learn in each iteration of its training. The selected network for this data mining problem consists of 4 layers. The two hidden ones are specified inside the parameters of the constructor.
 
-\lstinputlisting[language=Python, linerange={92-96}, caption={\texttt{MLPClassifier} used for classifing}]{../main.py}
+\lstinputlisting[language=Python, linerange={101-105}, caption={\texttt{MLPClassifier} used for classifing}]{../main.py}
 
 \section{The best classifier}
 
-For the given dataset and problem the random forest achieves the best results for me. I therefore selected the random forest as the best classifier. The problem is a unbalanced data set and is not easily linearly solvable. Therefore the Vector machine has its problems with this type of data set. The MLP is not able to reach the performance of the random forest in my case.
+For the given data set and problem the random forest achieves the best results for me. I therefore selected the random forest as the best classifier. The problem is a unbalanced data set and is not easily linearly solvable. Therefore the Vector machine has its problems with this type of data set. The MLP is not able to reach the performance of the random forest in my case.
 
 \subsection{Classifer type}
 As described above, the random forest belongs to the ensemble classifiers. It obtains its result from a large number of decision trees and counts the votes together to make the classification. This increases the accuracy in comparison to a single tree and also overfitting becomes a minor problem. It is also true that with increased variation the accuracy increases to a certain degree.
 
 \subsection{Performance}
 
-Using the training set, the random forest reached a AUC of $0.76$. That's just a little bit better than the other algorithms. Increasing the number of trees did improve the performance on the training set but decreased the performance of the test set on kaggle. Using python to run the random forest the execution was stable and fast compared to SVM or the MLP. Using multiple runs of the random forest, I was able to improve the score up to $0.77$
+Using the training set, the random forest reached a AUC of $0.76$. That's just a little bit better than the other algorithms. Increasing the number of trees did improve the performance on the training set but decreased the performance of the test set on kaggle. Using python to run the random forest the execution was stable and fast compared to SVM or the MLP. Using multiple runs of the random forest, I was able to improve the score up to $0.77$, this corresponds with the score on kaggle.
 
 \subsection{Solving the problem}
+
+Each decision tree inside the random forest uses multiple splitings to split the data set into different classes. Each split uses one or multiple features to divide the data set. Each split is optimized to get the optimal information gain for it. Inside the random forest each tree is trained with its own subset of the training data.
+
+My final solution uses multiple execution of the random forest. After all executions a function collects all votes and turns them into a single class. The parameters for the random forest are optimized using grid search.
+
+\lstinputlisting[language=Python, linerange={69-86}, caption={Final problem solving code}]{../main.py}
+
+
+
 
 
 
