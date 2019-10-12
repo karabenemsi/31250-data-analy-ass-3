@@ -6,27 +6,19 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neighbors import RadiusNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import RepeatedKFold
 from sklearn.svm import SVC
 from imblearn.over_sampling import SMOTE
 from sklearn.metrics import roc_auc_score
 
 
-def k_fold_model(classifier_model, x, y):
-    cv = StratifiedKFold(n_splits=5)
-    for train_idx, test_idx, in cv.split(x, y):
-        x_train, y_train = x[train_idx], y[train_idx]
-        x_test, y_test = x[test_idx], y[test_idx]
+def smote_train_model(classifier_model, x, y):
+    # Use SMOTE to oversample the dataset for better training accuracy
+    sm = SMOTE()
+    x_train_oversampled, y_train_oversampled = sm.fit_sample(x, y)
 
-        # Use SMOTE to oversample the dataset for better training accuracy
-        sm = SMOTE()
-        x_train_oversampled, y_train_oversampled = sm.fit_sample(x_train, y_train)
-
-        # Fit and predict
-        classifier_model.fit(x_train_oversampled, y_train_oversampled)
-        y_pred = classifier_model.predict(x_test)
-
-        print(f'auc: {roc_auc_score(y_test, y_pred)}')
+    # Fit and predict
+    classifier_model.fit(x_train_oversampled, y_train_oversampled)
     return classifier_model
 
 
@@ -56,7 +48,7 @@ def decide_for_unsure(df, name):
 
 # Get Preprocessed Data
 train_target, train_data, test_data, train_df, test_df = preprocess.preprocess(
-    "TrainingSet.csv", 'TestSet.csv', limit=None, remove_low_variance=True, remove_outliers=True)
+    "TrainingSet.csv", 'TestSet.csv', limit=10000, remove_low_variance=True, remove_outliers=True)
 X_g_train, X_g_test, y_g_train, y_g_test = train_test_split(train_data, train_target, test_size=0.30)
 print(f'TrainSet has {train_target.sum()} times 1')
 
@@ -66,27 +58,8 @@ test_predict = dict()
 
 # Random Forest
 print('Start Random Forest')
-model = RandomForestClassifier(n_estimators=98, criterion='entropy', n_jobs=-1, warm_start=True)
-#model = k_fold_model(model, train_data, train_target)
-
-cv = StratifiedKFold(n_splits=5)
-for train_idx, test_idx, in cv.split(X_g_train, y_g_train):
-    x_train, y_train = X_g_train[train_idx], y_g_train[train_idx]
-    x_test, y_test = X_g_train[test_idx], y_g_train[test_idx]
-
-    # Use SMOTE to oversample the dataset for better training accuracy
-    sm = SMOTE()
-    x_train_oversampled, y_train_oversampled = sm.fit_sample(x_train, y_train)
-
-    # Fit and predict
-    model.fit(x_train_oversampled, y_train_oversampled)
-    y_pred = model.predict(x_test)
-    esti = model.get_params()['n_estimators']
-    model.set_params(**{'n_estimators':esti + 98})
-
-    print(f'auc: {roc_auc_score(y_test, y_pred)}')
-
-
+model = RandomForestClassifier(n_estimators=98, criterion='entropy', n_jobs=-1)
+model = smote_train_model(model, X_g_train, y_g_train)
 y_predict = model.predict(X_g_test)
 print(roc_auc_score(y_g_test, y_predict))
 
@@ -96,7 +69,7 @@ test_predict['RandomForest'] = np.array(model.predict(X_g_test))
 # SVM
 print('SVM')
 model = SVC(gamma='auto', kernel='rbf')
-model = k_fold_model(model, X_g_train, y_g_train)
+model = smote_train_model(model, X_g_train, y_g_train)
 y_predict = model.predict(X_g_test)
 print(roc_auc_score(y_g_test, y_predict))
 
@@ -106,8 +79,8 @@ test_predict['SVM'] = np.array(model.predict(X_g_test))
 # Neural Network
 print('Start MLPClassifier')
 model = MLPClassifier(solver='adam', alpha=0.0001, learning_rate_init=0.001,
-                      hidden_layer_sizes=(100,), max_iter=1000, warm_start=True)
-model = k_fold_model(model, X_g_train, y_g_train)
+                      hidden_layer_sizes=(17,11), max_iter=1000, warm_start=True)
+model = smote_train_model(model, X_g_train, y_g_train)
 y_predict = model.predict(X_g_test)
 print(roc_auc_score(y_g_test, y_predict))
 

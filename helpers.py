@@ -19,12 +19,12 @@ def string_to_value(string):
     # if string == '-1' or string == -1:
     #     return None
     if len(string) == 1:
-        return ord(string) - 64
-        # return ord(string)
+        # return ord(string) - 64
+        return ord(string)
     value = 0
     for index, char in enumerate(string):
-        # value += ord(char)
-        value += (ord(char) - 64) * pow(10, index)
+        value += ord(char)
+        # value += (ord(char) - 64) * pow(10, index)
     return value
 
 
@@ -45,20 +45,17 @@ def minus_to_none(value):
 def parse_data(df):
     # Convert Date
     df['Original_Quote_Date'] = df['Original_Quote_Date'].apply(str_to_timestamp)
-
     # Convert bool-values to int of 1 and 0
     df['Field_info4'] = df['Field_info4'].apply(string_to_bool)
     df['Personal_info1'] = df['Personal_info1'].apply(string_to_bool)
     df['Property_info1'] = df['Property_info1'].apply(string_to_bool)
     df['Geographic_info4'] = df['Geographic_info4'].apply(string_to_bool)
-
     # Convert string to int values
     df['Field_info1'] = df['Field_info1'].apply(string_to_value)
     df['Coverage_info3'] = df['Coverage_info3'].apply(string_to_value)
     df['Sales_info4'] = df['Sales_info4'].apply(string_to_value)
     df['Personal_info3'] = df['Personal_info3'].apply(string_to_value)
     df['Property_info3'] = df['Property_info3'].apply(string_to_value)
-
     # Convert special amount to int
     df['Field_info3'] = df['Field_info3'].apply(format_amount)
     return df

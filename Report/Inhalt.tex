@@ -14,22 +14,62 @@ The goal for this problem will be to categorize each datapoint. There are only t
 
 To provide a good starting point for the classifiers I preprocess the raw data. To solve the problem I use python with jupyter notebooks. The following explanations will be supported by short listings. The main sourcecode can be found in the appendix of this report.
 
+\subsection{Parsing the data}
 After importing the data from csv, I start by converting the date into a unix timestamp and all ordinal features into numbers. I also convert dichotomous features that are coded with "Y" and "N" into machine readable "0" and "1", respectively.
 
-\lstinputlisting[language=Python,  linerange={37-43,48-52}, caption={An excerpt of the parse function}]{../helpers.py}
+\lstinputlisting[language=Python,  linerange={45-49,58-61}, caption={An excerpt of the parse function}]{../helpers.py}
 
+\subsection{Categorical data}
 After parsing all data I convert categorical features into many flags. This makes it easier for following classifiers to work with these features. To do this I use a function of \texttt{pandas} called \texttt{get\_dummies}. After adding those flags I delete the original feature as it would contain redundant information. The shown function can handle multiple feature conversions at once.
 
-\lstinputlisting[language=Python,  linerange={57-69}, caption={The function to convert one categorical feature into many dichotomous}]{../helpers.py}
+\lstinputlisting[language=Python,  linerange={64-76}, caption={The function to convert one categorical feature into many dichotomous}]{../helpers.py}
 
 After converting the features, the training set and and test set could contain different amount of features (flags). To solve this, I populate the sets with all missing flags.
 
-\lstinputlisting[language=Python,  linerange={33-37}, caption={Add missing flag features to both sets}]{../preprocess.py}
+\lstinputlisting[language=Python,  linerange={30-34}, caption={Add missing flag features to both sets}]{../preprocess.py}
 
+\subsection{Feature Selection}
+The next preprocessing step is feature selection. I remove different features depending on different reasons. The first removed feature is \texttt{Personal\_info5} which contains lots of empty values and a low variance. After doing so I delete all rows with empty values inside the training set and fill all empty values inside the test set. I delete emtpy values inside the training set and fill them inside the test set because the empty values inside the training set are more numerous and appear in different features. Inside the test set they only appear in two dichotomous features and less often.
 
-\section{Attacking the problem}
+\lstinputlisting[language=Python, linerange={39-45}, caption={Removal of specifc features and emtpy values}]{../preprocess.py}
+
+Next I remove all features with a variance under $0.16$. I remove those because they don't contain enough information to classify the data and only increase the dimensionality of the data set. The feature I remove in the training set, I also remove in the test set. 
+
+\lstinputlisting[language=Python, linerange={79-93}, caption={Removal of features with low variance}]{../helpers.py}
+
+\subsection{Outliers}
+
+To remove all outliers inside the training set, I calculate the z-score for most features and delete all rows on the edge of the normal distribution (z-score > 3).
+I don't alter the test set in this step
+
+\subsection{Scaling}
+
+To generate a scaled and normalized data set for the classifers to work with, I use the \texttt{StandardScaler} of scikit-learn. This will scale the features to unit variance and center them to have a mean of zero. The output of the Standard Scaler will be more gaussian than the input data and provide a better starting point for the classifiers to work with. Some of them will also require scaled data.
+
+I tried out different scaling methods but the combination of these two got the best results for me. This makes sense as the resulting values will be distributed normaly and most classifiers work best with this kind of data.
+
 
 \section{Classification techniques}
+
+For the classification process I reviewed multiple classifiers. I ended up optimizing three of them. 
+
+\subsection{Parameter optimization}
+
+To improve the performance of all classifiers I use \texttt{GridSearchCV} to find the optimal parameters for each classifier. The parameters shown in the following sections are all found using this technique. \texttt{GridSearchCV} runs the classifier with every possible combination of parameters and can return the parameter with the highest accuracy.
+
+\begin{lstlisting}[language=Python, caption={Example use of \texttt{GridSearchCV} for the random forest classifier}]
+model = RandomForestClassifier(n_jobs=-1)
+params = {'n_estimators':range(0,200), 'criterion':('gini','entropy')}
+gridSearch = GridSearchCV(model, params, cv=5, verbose=2, n_jobs=-1)
+gridSearch.fit(X_g_train, y_g_train)
+gridSearch.cv_results_['params'][gridSearch.best_index_]
+\end{lstlisting}
+
+\subsection{Random Forest}
+
+\subsection{Support Vector Machines}
+
+\subsection{Multilayer Perceptron}
 
 
 % Parameter optimization!
