@@ -51,7 +51,16 @@ I tried out different scaling methods but the combination of these two got the b
 
 \section{Classification techniques}
 
-For the classification process I reviewed multiple classifiers. I ended up optimizing three of them. 
+For the classification process I reviewed multiple classifiers. I ended up optimizing three of them.
+
+After reading and preprocessing the data set, I am splitting the training set int a train and test part. The test part in this split takes up 30\,\%.
+
+\lstinputlisting[language=Python, linerange={59-61}, caption={Preprocessing and spliting the dataset}]{../main.py}
+
+For each classifier I use the SMOTE technique to oversample our dataset. SMOTE can be used on unbalanced datasets as ours (we less buyers than other). SMOTE is a method to oversample a data set to improve ROC performance \cite{SMOTE}.
+
+\lstinputlisting[language=Python, linerange={12-19}, caption={Function with SMOTE to oversample the dataset}]{../main.py}
+
 
 \subsection{Parameter optimization}
 
@@ -67,12 +76,20 @@ gridSearch.cv_results_['params'][gridSearch.best_index_]
 
 \subsection{Random Forest}
 
+The random forest is an ensemble classification method. It will build many decision trees and train them with a subset of the supplied data. After running those trees it will collect votes from all trees to classify a data point.
+
+The selected parameters set the number of trees inside the forest to $185$. This number gave optimal results without overfitting. Overfitting with too many trees can have an impact on the performance of the random forest. The selected criterion "entropy" uses information gain to build the decision trees.
+
+\lstinputlisting[language=Python, linerange={70-73}, caption={\texttt{RandomForestClassifier} used for classifing}]{../main.py}
+
 \subsection{Support Vector Machines}
+
+\lstinputlisting[language=Python, linerange={81-84}, caption={\texttt{SVC} used for classifing}]{../main.py}
 
 \subsection{Multilayer Perceptron}
 
+\lstinputlisting[language=Python, linerange={92-96}, caption={\texttt{MLPClassifier} used for classifing}]{../main.py}
 
-% Parameter optimization!
 
 \section{The best classifier}
 

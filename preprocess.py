@@ -66,10 +66,10 @@ def preprocess(train_file, test_file, limit=None, remove_low_variance=True, remo
     # Extract numeric values to scale them
 
     # Scale things
-    standard_scaler = StandardScaler()
-    standard_scaler.fit(train_data)
-    train_data = standard_scaler.transform(train_data)
-    test_data = standard_scaler.transform(test_data)
+    # standard_scaler = StandardScaler()
+    # standard_scaler.fit(train_data)
+    # train_data = standard_scaler.transform(train_data)
+    # test_data = standard_scaler.transform(test_data)
 
     # Normalize it to be more gaussian
     train_data = normalize(train_data, return_norm=False, axis=0)

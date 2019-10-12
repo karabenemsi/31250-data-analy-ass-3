@@ -3,10 +3,7 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.neighbors import RadiusNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
-from sklearn.model_selection import RepeatedKFold
 from sklearn.svm import SVC
 from imblearn.over_sampling import SMOTE
 from sklearn.metrics import roc_auc_score
@@ -46,9 +43,21 @@ def decide_for_unsure(df, name):
     return df
 
 
+def save_to_file(df, prediction, suffix):
+    df['QuoteConversion_Flag'] = pd.Series(prediction, index=df.index)
+
+    toDrop = []
+    for col in df.columns:
+        if col not in ['Quote_ID', 'QuoteConversion_Flag']:
+            toDrop.append(col)
+    df.drop(columns=toDrop, inplace=True)
+    df.to_csv(f'./results/Kaggle_Submission{suffix}.csv', index=False)
+    print('Written to file')
+
+
 # Get Preprocessed Data
 train_target, train_data, test_data, train_df, test_df = preprocess.preprocess(
-    "TrainingSet.csv", 'TestSet.csv', limit=10000, remove_low_variance=True, remove_outliers=True)
+    "TrainingSet.csv", 'TestSet.csv', limit=None, remove_low_variance=True, remove_outliers=True)
 X_g_train, X_g_test, y_g_train, y_g_test = train_test_split(train_data, train_target, test_size=0.30)
 print(f'TrainSet has {train_target.sum()} times 1')
 
@@ -58,13 +67,14 @@ test_predict = dict()
 
 # Random Forest
 print('Start Random Forest')
-model = RandomForestClassifier(n_estimators=98, criterion='entropy', n_jobs=-1)
+model = RandomForestClassifier(n_estimators=185, criterion='entropy', n_jobs=-1)
 model = smote_train_model(model, X_g_train, y_g_train)
 y_predict = model.predict(X_g_test)
 print(roc_auc_score(y_g_test, y_predict))
 
 result_predict['RandomForest'] = np.array(model.predict(test_data))
 test_predict['RandomForest'] = np.array(model.predict(X_g_test))
+save_to_file(test_df, result_predict['RandomForest'], '_rf')
 
 # SVM
 print('SVM')
@@ -75,17 +85,19 @@ print(roc_auc_score(y_g_test, y_predict))
 
 result_predict['SVM'] = np.array(model.predict(test_data))
 test_predict['SVM'] = np.array(model.predict(X_g_test))
+save_to_file(test_df, result_predict['SVM'], '_svm')
 
 # Neural Network
 print('Start MLPClassifier')
 model = MLPClassifier(solver='adam', alpha=0.0001, learning_rate_init=0.001,
-                      hidden_layer_sizes=(17,11), max_iter=1000, warm_start=True)
+                      hidden_layer_sizes=(17, 11), max_iter=1000, warm_start=True)
 model = smote_train_model(model, X_g_train, y_g_train)
 y_predict = model.predict(X_g_test)
 print(roc_auc_score(y_g_test, y_predict))
 
 result_predict['mlpNetwork'] = np.array(model.predict(test_data))
 test_predict['mlpNetwork'] = np.array(model.predict(X_g_test))
+save_to_file(test_df, result_predict['mlpNetwork'], '_mlp')
 
 # Do stuff with unsure rows
 
@@ -98,13 +110,5 @@ t_df = pd.DataFrame(test_predict)
 t_df = decide_for_unsure(t_df, 'TrainingSet')
 print(roc_auc_score(y_g_test, t_df['Final']))
 
-# Save Result to filen
-test_df['QuoteConversion_Flag'] = pd.Series(result_df['Final'], index=test_df.index)
-
-toDrop = []
-for col in test_df.columns:
-    if col not in ['Quote_ID', 'QuoteConversion_Flag']:
-        toDrop.append(col)
-test_df.drop(columns=toDrop, inplace=True)
-test_df.to_csv('Kaggle_Submission.csv', index=False)
-print('Written to file')
+# Save Result to file
+save_to_file(test_df, result_df['Final'], '_all')

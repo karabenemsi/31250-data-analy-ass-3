@@ -49,15 +49,15 @@
 
 
 % Verzeichnisse
-\clearpage
-\listoffigures
+%\clearpage
+%\listoffigures
 %\cleardoublepage
 
 %\listoftables
 %\cleardoublepage
 
-%\lstlistoflistings
-%\cleardoublepage
+\lstlistoflistings
+\cleardoublepage
 
 %\newcommand{\abkvz}{Abkürzungsverzeichnis}
 %\renewcommand{\nomname}{\abkvz}
@@ -68,17 +68,18 @@
 
 % Literatur ------------------------------------------------------------------
 
-%\renewcommand{\refname}{Literaturverzeichnis}
-%\bibliography{Bibliographie}
+\renewcommand{\refname}{Bibliography}
+\bibliography{Bibliographie}
 %\bibliographystyle{Allgemein/natdin} % DIN-Stil des Literaturverzeichnisses
-%\bibliographystyle{alphadin}
+%	\bibliographystyle{alphadin}
+\bibliographystyle{apalike}
 %\input{Erklaerung} % Eidesstattliche Erklärung nur wenn von nöten drucken
 
 % Anhang ---------------------------------------------------------------------
-%\clearpage
-%\appendix
-%\pagenumbering{Roman}
-%\input{Anhang}
+\clearpage
+\appendix
+\pagenumbering{Roman}
+\input{Anhang}
 
 
 
