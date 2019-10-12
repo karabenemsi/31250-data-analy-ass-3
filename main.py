@@ -67,7 +67,7 @@ test_predict = dict()
 
 # Random Forest
 for i in range(0,100):
-    print('Start Random Forest')
+    print('Start Random Forest No.' + str(i))
     model = RandomForestClassifier(n_estimators=185, criterion='entropy', n_jobs=-1)
     model = smote_train_model(model, X_g_train, y_g_train)
     y_predict = model.predict(X_g_test)
@@ -81,8 +81,6 @@ t_df = pd.DataFrame(test_predict)
 
 rf_df = decide_for_unsure(result_df, 'TestSet')
 rf2_df = decide_for_unsure(t_df, 'TrainSet')
-
-rf_df.to_csv('ForestResult.csv', index=False)
 
 print(roc_auc_score(y_g_test, rf2_df['Final']))
 save_to_file(test_df, rf_df['Final'], '_rf')
